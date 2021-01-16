@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Application_that_recognizes_algebraic_expressions_from_photo.iml" filepath="$PROJECT_DIR$/Application_that_recognizes_algebraic_expressions_from_photo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Application_That_Recognizes_Algebraic_Expressions_From_Photo.iml" filepath="$PROJECT_DIR$/Application_That_Recognizes_Algebraic_Expressions_From_Photo.iml" />
     </modules>
   </component>
 </project>

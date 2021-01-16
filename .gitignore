@@ -1,5 +1,4 @@
-/src/main/resources/read_odp/
+# Project exclude paths
+/target/
 /opencv/
-
-
-
+/src/main/resources/read_odp/

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<GridPane alignment="center" hgap="1.0" prefHeight="477.0" prefWidth="673.0" snapToPixel="false" vgap="1.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+    <children>
+        <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="100.0" minWidth="200.0" prefHeight="1080.0" prefWidth="1920.0">
+            <center>
+                <SplitPane dividerPositions="0.29797979797979796" prefHeight="160.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                    <items>
+                        <AnchorPane minHeight="0.0" minWidth="160.0" prefHeight="160.0" prefWidth="200.0">
+                            <children>
+                                <TitledPane animated="false" collapsible="false" minHeight="130.0" text="Menu" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <content>
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                            <children>
+                                                <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#Learn_click" text="Learn" />
+                                                <Button layoutX="14.0" layoutY="57.0" mnemonicParsing="false" onAction="#Detect_click" text="Detect" />
+                                            </children></AnchorPane>
+                                    </content>
+                                </TitledPane>
+                        <TitledPane animated="false" collapsible="false" text="Answer" AnchorPane.topAnchor="205.0">
+                          <content>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                 <children>
+                                    <Label fx:id="odpText" layoutX="14.0" layoutY="34.0" text="Answer" />
+                                 </children>
+                              </AnchorPane>
+                          </content>
+                        </TitledPane>
+                            </children></AnchorPane>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="499.0" prefWidth="465.0">
+                     <children>
+                        <ImageView fx:id="image_view" fitHeight="300.0" fitWidth="300.0" layoutX="127.0" layoutY="150.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                     </children></AnchorPane>
+                    </items>
+                </SplitPane>
+            </center>
+            <top>
+                <MenuBar BorderPane.alignment="CENTER">
+                    <menus>
+                        <Menu mnemonicParsing="false" text="File">
+                            <items>
+                                <MenuItem mnemonicParsing="false" text="Close" />
+                            </items>
+                        </Menu>
+                        <Menu mnemonicParsing="false" text="Edit">
+                            <items>
+                                <MenuItem mnemonicParsing="false" text="Delete" />
+                            </items>
+                        </Menu>
+                        <Menu mnemonicParsing="false" text="Help">
+                            <items>
+                                <MenuItem mnemonicParsing="false" text="About" />
+                            </items>
+                        </Menu>
+                    </menus>
+                </MenuBar>
+            </top>
+        </BorderPane>
+    </children>
+    <columnConstraints>
+        <ColumnConstraints />
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints />
+    </rowConstraints>
+</GridPane>
