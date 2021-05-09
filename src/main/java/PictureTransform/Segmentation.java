@@ -53,10 +53,14 @@ public class Segmentation {
         int padding=5;
         boolean heck=true;
         Imgproc.cvtColor(matrix, odp, Imgproc.COLOR_BGR2GRAY);
+        /**
+         sprawdz kolor tła i obruć w razie potrzeby
+         */
         Imgproc.threshold(odp, odp, 60, 255, THRESH_BINARY);
         List<Digit_coordinate> liczby=new ArrayList<>();
 
         Imgproc.findContours(odp,contours,hierarchy,Imgproc.RETR_TREE,Imgproc.CHAIN_APPROX_SIMPLE);
+
         matrix =odp;
         List<Point> points;
         File[] files=new File[contours.size()];
@@ -78,6 +82,9 @@ public class Segmentation {
                 if (h < (int) point.y)
                     h = (int) point.y;
             }
+            /**
+             sprawdz minimalnej wielkości kontorów (tymczasowo usunięte)
+             */
 
             int paddingW=3;
             Rect rectCrop0 = new Rect(x - paddingW, y - paddingW, w - x + (2 * paddingW), h - y + (2 * paddingW));
@@ -334,12 +341,12 @@ public class Segmentation {
     }
 
     public void extract_grid(){
-        String znak ="12";
+        String znak ="99";
         int szer_line=2;
         int szer_grid=28;
         szer_grid*=2;
         String path_file = "C:/Users/lasek/Desktop/"+znak+"/";
-        String path = "C:/Users/lasek/Desktop/"+"12.png";
+        String path = "C:/Users/lasek/Desktop/"+"a.png";
         Mat mat;
         mat = Imgcodecs.imread(path);
         int nazwa=0;

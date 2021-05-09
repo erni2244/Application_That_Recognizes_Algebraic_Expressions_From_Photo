@@ -30,7 +30,7 @@ public class Recognition {
 
     public String recognise1() throws IOException {
         String odpowiedz="";
-        MultiLayerNetwork model = MultiLayerNetwork.load(new File("Siec_cyfr"),false);
+        MultiLayerNetwork model = MultiLayerNetwork.load(new File("Siec_cyfr_MLP"),false);
         NativeImageLoader nativeImageLoader = new NativeImageLoader(HEIGHT, WIDTH);
         ImagePreProcessingScaler scaler = new ImagePreProcessingScaler(0, 1);
         INDArray input = Nd4j.create(new int[]{1, HEIGHT * WIDTH});
@@ -196,12 +196,7 @@ public class Recognition {
                 odp+=fun1(structura);
                 structura.clear();
             }
-
         }
-
-
-
-
         return odp;
     }
 

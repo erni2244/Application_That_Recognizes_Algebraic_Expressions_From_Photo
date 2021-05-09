@@ -25,6 +25,7 @@ import org.deeplearning4j.nn.weights.WeightInit;
 import org.deeplearning4j.ui.api.UIServer;
 import org.deeplearning4j.ui.model.stats.StatsListener;
 import org.deeplearning4j.ui.model.storage.InMemoryStatsStorage;
+import org.nd4j.evaluation.classification.Evaluation;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.DataSet;
@@ -58,7 +59,7 @@ public class Learn {
     private static final int WIDTH = 28;
     private static final int N_OUTCOMES = 14;
     private static final int N_SAMPLES_TRAINING = 3060*N_OUTCOMES;
-    private static final int N_SAMPLES_TESTING = 10000;
+    private static final int N_SAMPLES_TESTING = 110*N_OUTCOMES;
 
     private static long t0 = System.currentTimeMillis();
 
@@ -254,35 +255,13 @@ public class Learn {
         System.out.println("finisch traine succes");
         svm.save("SVMclasyfier.xml");
         System.out.println("save traine succes");
-
+        test_SVM();
     }
 
-    private void buildModel() throws IOException {
+    private void learnConvolutionNetwork() throws IOException {
 
         int rngSeed = 7563;
         int nEpochs = 5;
-
-        System.out.println("Build Model...");
-        MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
-                .seed(rngSeed)
-                .updater(new Nesterovs(0.006, 0.9))
-                .l2(1e-4).list()
-                .layer(0,new DenseLayer.Builder()
-                        .nIn(HEIGHT*WIDTH).nOut(1000).activation(Activation.RELU)
-                        .weightInit(WeightInit.XAVIER).build())
-                .layer(1,new DenseLayer.Builder()
-                        .nIn(1000).nOut(200).activation(Activation.RELU).weightInit(WeightInit.XAVIER)
-                        .build())
-                .layer(2,new DenseLayer.Builder()
-                        .nIn(200).nOut(100).activation(Activation.LEAKYRELU).weightInit(WeightInit.XAVIER)
-                        .build())
-                .layer(3,new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
-                        .nIn(100).nOut(N_OUTCOMES).activation(Activation.SOFTMAX)
-                        .weightInit(WeightInit.XAVIER).build())
-                .build();
-
-
-
         //-----------------------------------------------------------------------------------------------------------------
         int channels = 1;
 
@@ -349,24 +328,57 @@ public class Learn {
         System.out.print("========================================================================================================================================================");
 
 
-        //DataSetIterator testDsi = getDataSetIterator2(RESOURCES_FOLDER_PATH+"/testing", N_SAMPLES_TESTING,null);
-        //System.out.print("Evaluating Model...");
-        //Evaluation eval = model2.evaluate(testDsi);
-        //System.out.print(eval.stats());
+        DataSetIterator testDsi = getDataSetIteratorsimply(RESOURCES_FOLDER_PATH+ "\\testing", N_SAMPLES_TESTING);
+        System.out.print("Evaluating Model...");
+        Evaluation eval = model2.evaluate(testDsi);
+        System.out.print(eval.stats());
 
         long t1 = System.currentTimeMillis();
         double t = (double)(t1-t0)/1000.0;
         System.out.print("\n\nTotal time: "+t+" seconds");
 
-/*
+
+    }
+
+    public void learnNetwork_MLP() throws IOException {
+        int rngSeed = 7563;
+        int nEpochs = 5;
+//.updater(new Adam(0.0007))
+        System.out.println("Build Model...");
+        MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
+                .seed(rngSeed)
+                .updater(new Nesterovs(0.006, 0.9))
+                .l2(1e-4).list()
+                .layer(0,new DenseLayer.Builder()
+                        .nIn(HEIGHT*WIDTH).nOut(1000).activation(Activation.RELU)
+                        .weightInit(WeightInit.XAVIER).build())
+                .layer(1,new DenseLayer.Builder()
+                        .nIn(1000).nOut(200).activation(Activation.RELU).weightInit(WeightInit.XAVIER)
+                        .build())
+                .layer(2,new DenseLayer.Builder()
+                        .nIn(200).nOut(100).activation(Activation.LEAKYRELU).weightInit(WeightInit.XAVIER)
+                        .build())
+                .layer(3,new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
+                        .nIn(100).nOut(N_OUTCOMES).activation(Activation.SOFTMAX)
+                        .weightInit(WeightInit.XAVIER).build())
+                .build();
+
+        DataSetIterator dsi;
+        dsi = getDataSetIterator(RESOURCES_FOLDER_PATH+ "\\training", N_SAMPLES_TRAINING);
         MultiLayerNetwork model = new MultiLayerNetwork(conf);
         model.init();
+
+        UIServer uiServer = UIServer.getInstance();
+        StatsStorage statsStorage = new InMemoryStatsStorage();
+        uiServer.attach(statsStorage);
+        model.setListeners(new StatsListener(statsStorage));
+
         //Print score every 500 interaction
-        model.setListeners(new ScoreIterationListener(500));
+        //model.setListeners(new ScoreIterationListener(500));
 
         System.out.print("Train Model...");
         model.fit(dsi);
-        model.save(new File("Siec_cyfr"));
+        model.save(new File("Siec_cyfr_MLP"));
 
         //Evaluation
         DataSetIterator testDsi = getDataSetIterator(RESOURCES_FOLDER_PATH+"/testing", N_SAMPLES_TESTING);
@@ -376,7 +388,47 @@ public class Learn {
 
         long t1 = System.currentTimeMillis();
         double t = (double)(t1-t0)/1000.0;
-        System.out.print("\n\nTotal time: "+t+" seconds");*/
+        System.out.print("\n\nTotal time: "+t+" seconds");
+    }
+
+
+    public void test_SVM(){
+        int[][] wyniki = new int[N_OUTCOMES][N_OUTCOMES];
+        SVM svm = SVM.load("SVMclasyfier.xml");
+        Mat data_mat = new Mat(1,HEIGHT*WIDTH,CV_8U);
+        File folder=new File(RESOURCES_FOLDER_PATH+"\\testing\\");
+        File[] digitFolders = folder.listFiles();
+        float index;
+        int good=0;
+        for (File digitFolder : digitFolders) {
+            int labelDigit = Integer.parseInt(digitFolder.getName());
+            File[] imageFiles = digitFolder.listFiles();
+            for (File imgFile : imageFiles) {
+                Mat img = Imgcodecs.imread(imgFile.getPath());
+                for (int w = 0; w < WIDTH; w++) {
+                    for (int h = 0; h < HEIGHT; h++) {
+                        data_mat.put(0, w * 28 + h, img.get(w, h));
+                    }
+                }
+                data_mat.convertTo(data_mat, CvType.CV_32FC1);
+                index = svm.predict(data_mat);
+                if(((int)index)==labelDigit)
+                    good++;
+                wyniki[labelDigit][(int)index]++;
+            }
+        }
+        System.out.println(good);
+        System.out.println("precision :   "+((double)good/N_SAMPLES_TESTING));
+
+        System.out.println("=========================Confusion Matrix=========================");
+        System.out.println("0   1   2   3   4   5   6   7   8   9   10  11  12  13");
+        System.out.println("------------------------------------------------------");
+        for(int i=0;i<N_OUTCOMES;i++) {
+            for (int j = 0; j < N_OUTCOMES; j++) {
+                System.out.printf("%-4s",wyniki[i][j]);
+            }
+            System.out.println("| "+i+" = "+i);
+        }
     }
 
 
@@ -384,9 +436,28 @@ public class Learn {
         BasicConfigurator.configure();
         t0 = System.currentTimeMillis();
         System.out.print(RESOURCES_FOLDER_PATH + "/training");
-        buildModel();
+        learnConvolutionNetwork();
+        //learnNetwork_MLP();
         //buildModelHaar();
     }
 
+    public void start_learn_convalution() throws IOException{
+        BasicConfigurator.configure();
+        t0 = System.currentTimeMillis();
+        System.out.print(RESOURCES_FOLDER_PATH + "/training");
+        learnConvolutionNetwork();
+    }
+    public void start_learn_MLP() throws IOException{
+        BasicConfigurator.configure();
+        t0 = System.currentTimeMillis();
+        System.out.print(RESOURCES_FOLDER_PATH + "/training");
+        learnNetwork_MLP();
+    }
+    public void start_learn_SVM() throws IOException{
+        BasicConfigurator.configure();
+        t0 = System.currentTimeMillis();
+        System.out.print(RESOURCES_FOLDER_PATH + "/training");
+        buildModelHaar();
+    }
 
 }

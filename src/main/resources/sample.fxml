@@ -16,8 +16,9 @@
                                     <content>
                                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                             <children>
-                                                <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#Learn_click" text="Learn" />
-                                                <Button layoutX="14.0" layoutY="57.0" mnemonicParsing="false" onAction="#Detect_click" text="Detect" />
+                                                <Button layoutX="14.0" layoutY="129.0" mnemonicParsing="false" onAction="#Learn_click" text="Learn" />
+                                                <Button layoutX="130.0" layoutY="129.0" mnemonicParsing="false" onAction="#Detect_click" text="Detect" />
+                                    <ChoiceBox fx:id="select_type_network" layoutX="23.0" layoutY="14.0" prefWidth="150.0" />
                                             </children></AnchorPane>
                                     </content>
                                 </TitledPane>
